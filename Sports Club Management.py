@@ -8,16 +8,16 @@ print()
 print('''New members are expected to pay the first year's fees in advance.
 hence the date of enrollement to sports club is also taken as the date of
 Payement of Fees''' )
-print()
+
 while ch!=0:
-    print("(1) Access Member File")
+    print("\n(1) Access Member File")
     print("(2) Access Fees File")
     print("(3) Access Facility File")
     print("(0) Exit Menu")
     ch=int(input("Enter Choice"))
     if ch==1:
         while ch!=0:
-            print("(1) Input New Member details")
+            print("\n(1) Input New Member details")
             print("(2) Search for Member details")
             print("(3) Edit Member details")
             print("(4) Delete Member Records")
@@ -38,7 +38,7 @@ while ch!=0:
         ch=1
     elif ch==2:
         while ch!=0:
-            print("(1) Display Fees File")
+            print("\n(1) Display Fees File")
             print("(2) Members Fees due in a Month")
             print("(3) Update Fees File")
             print("(0) Exit Menu")
@@ -52,7 +52,7 @@ while ch!=0:
         ch=2
     elif ch==3:
         while ch!=0:
-            print("(1) Add new facilites")
+            print("\n(1) Add new facilites")
             print("(2) Display Facilites Available")
             print("(0) Exit Menu")
             ch=int(input("Enter Choice"))
