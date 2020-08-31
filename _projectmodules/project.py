@@ -41,16 +41,16 @@ def datevalidation():
     return date
 def facilityvalid():
     valid=0
-    print("Minimum 1 Facility must be entered, click enter to leave a facility blank")
+    print("\nMinimum 1 Facility must be entered, click enter to leave a facility blank")
     while valid==0:
         fc1=input("First Facility Code")
         fc2=input("Second Facility Code")
         fc3=input("Third Facility Code")
         if fc1==fc2 and fc1!='' or fc2==fc3 and fc2!='' or fc3==fc1 and fc3!='': 
             valid==0
-            print("Duplicate Facility Code entered, please enter the code again")
+            print("Duplicate Facility Code entered, please enter the code again\n")
         elif fc1=='' and fc2=='' and fc3=='':
-            print("All fields are empty, please enter the code again")
+            print("All fields are empty, please enter the code again\n")
             valid==0
         else:
             with open("Facility File.dat",'rb')as fac:
@@ -84,7 +84,7 @@ def editdetails():
                     found=1
                     choice=1
                     while choice!=0:
-                        print("Enter 1 to edit Address")
+                        print("\nEnter 1 to edit Address")
                         print("Enter 2 to edit Phone Number")
                         print("Enter 3 to edit Facility")
                         print("Enter 0 to exit")
@@ -98,7 +98,7 @@ def editdetails():
             with open('Member File.dat','wb')as files:
                 pickle.dump(k,files)
             if found==0:
-                print("Code entered does not exist, exiting function")
+                print("Code entered does not exist, exiting function\n")
 def display():
     with open("Member File.dat",'rb') as f:
         try:
@@ -114,7 +114,7 @@ def deleterec():
         found=0
         feesnew=[]
         recnew=[]
-        code=input("Enter code of Member to be deleted or to cancel Enter 0 ")
+        code=input("\nEnter code of Member to be deleted or to cancel Enter 0 ")
         if code=='0':
             return None
         try:
@@ -136,9 +136,9 @@ def deleterec():
                 for j in feesnew:
                     pickle.dump(j,feesdel)
         if found==0:
-            print("Member code not found, exiting function")
+            print("Member code not found, exiting function\n")
         else:
-            print("Member record successfuly deleted")
+            print("Member record successfuly deleted\n")
 def newmember():
     with open('Member File.dat','rb')as member:
         recnew=[]
@@ -242,7 +242,7 @@ def updatefees():
                     f1,f2,f3=rec[5],rec[6],rec[7]
         except:
             if valid==0:
-                print("Invalid Code, Terminating Function")
+                print("Invalid Code, Terminating Function\n")
                 return()
             print('3')
             with open ("Fees file.dat",'rb')as fees:
@@ -268,7 +268,7 @@ def updatefees():
 def addfac():
     with open("Facility file.dat","rb")as fac:
         try:
-            newfac=input("Enter name of new Facility to be added")
+            newfac=input("\nEnter name of new Facility to be added")
             c=1
             recnew=[]
             valid=1
@@ -280,7 +280,7 @@ def addfac():
                 recnew.append(rec)
         except:
             if valid==0:
-                print("Facility Already exists")
+                print("Facility Already exists\n")
                 return()
             with open("Facility file.dat","wb")as fac:
                 recnew.append([c,newfac])
@@ -303,23 +303,5 @@ def searchmember():
                     print('='*88)
         except:
             if valid==0:
-                print("Invalid Code Entered")
+                print("Invalid Code Entered\n")
     
-                
-            
-                
-                
-                
-                
-                
-                    
-            
-            
-    
-
-                    
-
-
-    
-
-
