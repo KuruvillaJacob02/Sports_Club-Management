@@ -14,7 +14,7 @@ while ch!=0:
     print("(2) Access Fees File")
     print("(3) Access Facility File")
     print("(0) Exit Menu")
-    ch=int(input("Enter Choice"))
+    ch=int(input("Enter Choice : "))
     if ch==1:
         while ch!=0:
             print("\n(1) Input New Member details")
@@ -23,7 +23,7 @@ while ch!=0:
             print("(4) Delete Member Records")
             print("(5) Display All Member Records")
             print("(0) Exit Menu")
-            ch=int(input("Enter Choice"))
+            ch=int(input("Enter Choice : "))
             if ch==1:
                 project.newmember()
             elif ch==2:
@@ -42,7 +42,7 @@ while ch!=0:
             print("(2) Members Fees due in a Month")
             print("(3) Update Fees File")
             print("(0) Exit Menu")
-            ch=int(input("Enter Choice"))
+            ch=int(input("Enter Choice : "))
             if ch==1:
                 project.dispfees()
             elif ch==2:
@@ -55,7 +55,7 @@ while ch!=0:
             print("\n(1) Add new facilites")
             print("(2) Display Facilites Available")
             print("(0) Exit Menu")
-            ch=int(input("Enter Choice"))
+            ch=int(input("Enter Choice : "))
             if ch==1:
                 project.addfac()
             elif ch==2:
