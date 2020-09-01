@@ -110,8 +110,9 @@ def display():
             print(tabulate(list1,headers=['Code','Name','Date','Address','Phone Number','Fc1','Fc2','Fc3'], tablefmt='github'))
 def deleterec():
     with open("Member File.dat","rb") as recdel:
+        today=date.today()
         feesdel=open("Fees file.dat","rb")
-        found=0
+        found,overdue=0,0
         feesnew=[]
         recnew=[]
         code=input("\nEnter code of Member to be deleted or to cancel Enter 0 ")
@@ -121,12 +122,20 @@ def deleterec():
             while True:
                 fees=pickle.load(feesdel)
                 rec=pickle.load(recdel)
-                if code!=rec[0]:
-                    recnew.append(rec)
-                else:
-                    found=1
                 if code!=fees[0]:
                     feesnew.append(fees)
+                else:
+                    diff=(fees[2]-today).days
+                    if diff<=0:
+                        overdue=1
+                        feesnew.append(fees)
+
+                if code!=rec[0]:
+                    recnew.append(rec)
+                elif code==rec[0] and overdue==1:
+                    recnew.append(rec)
+                else:
+                    found=1    
         except:
             feesdel.close()
             with open("Member File.dat","wb") as recdel:
@@ -137,6 +146,8 @@ def deleterec():
                     pickle.dump(j,feesdel)
         if found==0:
             print("Member code not found, exiting function\n")
+        elif overdue==1:
+            print("Member fees is Overdue, record can only be deleted after payment of fees\n")
         else:
             print("Member record successfuly deleted\n")
 def newmember():
@@ -219,13 +230,6 @@ def duefees():
                 if diff<=30:
                     recnew.append([rec[0],rec[2]])
         except:
-            '''title=['Code',' Fees Due Date']
-            print('{:<9}|{:<11}'.format(title[0],title[1]))
-            for k in recnew:
-                diff=(k[2]-today).days
-                if diff<=30:
-                    print(k[2])
-                    print('{:<9}|{:<11}'.format(k[0],k[2]))'''
             print(tabulate(recnew,headers=['Code','Due Date'], tablefmt='github'))
             
 def updatefees():
