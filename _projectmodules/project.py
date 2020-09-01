@@ -11,8 +11,6 @@ def codegen(codelist):
             code+=id.hex[k]
         valid=1
         return code
-        '''for codes in codelist:
-            if code not in codes[0]:'''
                 
 def namevalid():
     valid=0
@@ -27,7 +25,7 @@ def datevalidation():
     valid=0
     today=date.today()
     while valid==0:
-        doj=input("Ente date in DD/MM/YYYY")
+        doj=input("Ente date in DD/MM/YYYY : ")
         d,m,y=[int(x) for x in doj.split('/')]
         try:
             doj=date(y,m,d)
@@ -88,11 +86,11 @@ def editdetails():
                         print("Enter 2 to edit Phone Number")
                         print("Enter 3 to edit Facility")
                         print("Enter 0 to exit")
-                        choice=int(input("Enter your Choice"))
+                        choice=int(input("Enter your Choice : "))
                         if choice==1:
-                            rec[3]=input("Enter New Adress")
+                            rec[3]=input("Enter New Adress : ")
                         elif choice==2:
-                            rec[4]=int(input("Enter New Phone Number"))
+                            rec[4]=int(input("Enter New Phone Number : "))
                         elif choice==3:
                             rec[5],rec[6],rec[7]=facilityvalid()
             with open('Member File.dat','wb')as files:
@@ -165,9 +163,9 @@ def newmember():
                     print("Your Unique Member code=",code)
                     name=namevalid()
                     doj=datevalidation()
-                    address=input("Enter Adress")
-                    phone=int(input("Enter Phone Number"))
-                    print('''An annual membership fee is Rs. 10,000 and for every 
+                    address=input("Enter Adress : ")
+                    phone=int(input("Enter Phone Number : "))
+                    print('''The annual membership fee is Rs. 10,000 and for every 
 facility (sports) selected a member has to pay Rs. 2,000 annually''')
                     fc1,fc2,fc3=facilityvalid()
                     newrec=[code,name,doj,address,phone,fc1,fc2,fc3]
@@ -236,7 +234,7 @@ def updatefees():
     with open("Member file.dat","rb")as member:
         today=date.today()
         valid=0
-        code=input("Enter Code of Member")
+        code=input("Enter Code of Member : ")
         try:
             while True:
                 rec=pickle.load(member)
@@ -272,7 +270,7 @@ def updatefees():
 def addfac():
     with open("Facility file.dat","rb")as fac:
         try:
-            newfac=input("\nEnter name of new Facility to be added")
+            newfac=input("\nEnter name of new Facility to be added : ")
             c=1
             recnew=[]
             valid=1
