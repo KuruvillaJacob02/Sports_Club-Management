@@ -24,7 +24,8 @@ Upon entering the unique Alphanumeric code provided to each member, they will be
 The user will be able to edit detials of the members such as Phone number ,Address and the Facilities they wish to join
 ##### d)Delete member records:
 Upon entering the unique Alphanumeric code provided to each member, user can delete a member from the system
-**Note: If the member's fees is overdue, the deletion proccess will not take place [This functionality is yet to be implemented]**
+
+**Note: If the member's fees is overdue, the deletion proccess will not take place**
 ##### e)Display all Member records:
 Self Explainatory
 ## 2) Access Fees file:
