@@ -1,8 +1,20 @@
 #use _author_ = 'Kuruvilla Jacob'
+import mysql.connector as ms
 import uuid
 import pickle
 from tabulate import tabulate
 from datetime import date,timedelta
+
+def connect(host,user,passwd):
+    global myq
+    myq=ms.connect(host=host,user=user,passwd=passwd,database='SportsClub')
+    global cur
+    if myq.is_connected():
+        print("Successfuly connected to Database")
+    else:
+        print("Unable to connect to SQL, exit program by Entering 0")
+    cur=myq.cursor(buffered=True)
+
 def codegen(codelist):
     valid=0
     while valid==0:
@@ -150,30 +162,20 @@ def deleterec():
         else:
             print("Member record successfuly deleted\n")
 def newmember():
-    with open('Member File.dat','rb')as member:
-        recnew=[]
-        try:
-            while True:
-                rec=pickle.load(member)
-                recnew.append(rec)
-        except:
-            with open('Member File.dat','wb')as member:
-                n=int(input("Enter Number of New Members"))
-                for loop in range(n):
-                    code=codegen(recnew)
-                    print("Your Unique Member code=",code)
-                    name=namevalid()
-                    doj=datevalidation()
-                    address=input("Enter Adress : ")
-                    phone=int(input("Enter Phone Number : "))
-                    print('''The annual membership fee is Rs. 10,000 and for every 
+    n=int(input("Enter Number of New Members"))
+    for loop in range(n):
+        code=codegen(recnew)
+        print("Your Unique Member code=",code)
+        name=namevalid()
+        doj=datevalidation()
+        address=input("Enter Adress : ")
+        phone=int(input("Enter Phone Number : "))
+        print('''The annual membership fee is Rs. 10,000 and for every 
 facility (sports) selected a member has to pay Rs. 2,000 annually''')
-                    fc1,fc2,fc3=facilityvalid()
-                    newrec=[code,name,doj,address,phone,fc1,fc2,fc3]
-                    pickle.dump(newrec,member)
-                    feesnew(doj,fc1,fc2,fc3,code)
-                for k in recnew:
-                    pickle.dump(k,member)
+        fc1,fc2,fc3=facilityvalid()
+        newrec=[code,name,doj,address,phone,fc1,fc2,fc3]
+        query="insert into Member values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}')".format(code,name,doj.strftime("%Y-%m-%d"),address,phone,fc1,fc2,fc3)
+        myq.commit()
 
 def caldue(daypaid):
     diff=timedelta(days=365)
@@ -290,21 +292,17 @@ def addfac():
                 for k in recnew:
                     pickle.dump(k,fac)
 def searchmember():
-    with open("Member file.dat","rb")as member:
-        code=input("Enter Member code")
-        title=['Code','Name','Date','Address','Phone','F1','F2','F3']
-        valid=0
-        try:
-            while True:
-                rec=pickle.load(member)
-                if rec[0]==code:
-                    valid=1
-                    print('='*88)
-                    print('{:<10} {:<16} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(title[0],title[1],title[2],title[3],title[4],title[5],title[6],title[7]))
-                    print('-'*88)
-                    print('{:<10} {:<16} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(rec[0],rec[1],str(rec[2]),rec[3],rec[4],rec[5],rec[6],rec[7]))
-                    print('='*88)
-        except:
-            if valid==0:
-                print("Invalid Code Entered\n")
+    code=input("Enter Member code")
+    query='select * from Member where Code={}'.format(code)
+    try:
+        cur.execute(query)
+        data=cur.fetchall()
+        for rec in data:
+            print('='*88)
+            print('{:<10} {:<16} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(title[0],title[1],title[2],title[3],title[4],title[5],title[6],title[7]))
+            print('-'*88)
+            print('{:<10} {:<16} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(rec[0],rec[1],str(rec[2]),rec[3],rec[4],rec[5],rec[6],rec[7]))
+            print('='*88)
+    except:
+        print("Invalid code entered, Record does not exist")
     
