@@ -9,6 +9,12 @@ print('''New members are expected to pay the first year's fees in advance.
 hence the date of enrollement to sports club is also taken as the date of
 Payement of Fees''' )
 
+host=input("Enter host name")
+passwd=input("Enter Sql password")
+user=input("Enter SQL username")
+
+connect(host,user,passwd)
+
 while ch!=0:
     print("\n(1) Access Member File")
     print("(2) Access Fees File")
