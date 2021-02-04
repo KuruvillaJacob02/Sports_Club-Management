@@ -1,5 +1,6 @@
 #use _author_ = 'Kuruvilla Jacob'
 import uuid
+import os
 import pickle
 from tabulate import tabulate
 from datetime import date,timedelta
@@ -22,29 +23,50 @@ def namevalid():
         else:
             print("Invalid Name, enter again")
     return name
-def datevalidation():
+def datebirth():
     valid=0
     today=date.today()
     while valid==0:
-        doj=input("Ente date in DD/MM/YYYY : ")
-        d,m,y=[int(x) for x in doj.split('/')]
+        dob=input("Ente date of birth in DD/MM/YYYY : ")
+        d,m,y=[int(x) for x in dob.split('/')]
         try:
-            doj=date(y,m,d)
-            if doj>today:
-                print("Invalid Date, Enter again")
+            dob=date(y,m,d)
+            diff=(today-dob).days
+            if dob>today:
+                print("Invalid Date of birth, Enter again")
+            elif diff<5475:
+                print("Must be older than 15 to register")
+            elif diff>=36500:
+                print("Members above the age of 100 wont be allowed to register, we respect your spirit though")
             else:
                 valid=1
-                return doj
+                return dob
         except:
-            print('Inavlid date, Enter again')
-    return date
+            print("Inavlid Date")
+
+def datetoday():
+    doj=date.today()
+    return doj
+def phonevalid():
+    valid=0
+    while valid==0:
+        try:
+            phone=int(input("Enter Number: "))
+            if len(str(phone))!=8 or str(phone).isalnum==True:
+                print("Invalid Phone Number")
+            else:
+                valid=1
+                return phone
+        except:
+            print("Invalid Phone Number")
+
 def facilityvalid():
     valid=0
     print("\nMinimum 1 Facility must be entered, click enter to leave a facility blank")
     while valid==0:
-        fc1=input("First Facility Code")
-        fc2=input("Second Facility Code")
-        fc3=input("Third Facility Code")
+        fc1=input("First Facility Code: ")
+        fc2=input("Second Facility Code: ")
+        fc3=input("Third Facility Code: ")
         if fc1==fc2 and fc1!='' or fc2==fc3 and fc2!='' or fc3==fc1 and fc3!='': 
             valid==0
             print("Duplicate Facility Code entered, please enter the code again\n")
@@ -68,7 +90,7 @@ def facilityvalid():
                             return fc1,fc2,fc3
 def editdetails():
     with open('Member File.dat','rb')as files:
-        code=input("Enter code of Member or to cancel enter 0")
+        code=input("Enter code of Member or to cancel enter 0: ")
         found=0 
         if code=='0':
             return None
@@ -89,13 +111,14 @@ def editdetails():
                         print("Enter 0 to exit")
                         choice=int(input("Enter your Choice : "))
                         if choice==1:
-                            rec[3]=input("Enter New Adress : ")
+                            rec[4]=input("Enter New Adress : ")
                         elif choice==2:
-                            rec[4]=int(input("Enter New Phone Number : "))
+                            rec[5]=phonevalid()
                         elif choice==3:
-                            rec[5],rec[6],rec[7]=facilityvalid()
+                            rec[6],rec[7],rec[8]=facilityvalid()
             with open('Member File.dat','wb')as files:
-                pickle.dump(k,files)
+                for k in recnew:
+                    pickle.dump(k,files)
             if found==0:
                 print("Code entered does not exist, exiting function\n")
 def display():
@@ -106,7 +129,7 @@ def display():
                 rec=pickle.load(f)
                 list1.append(rec)
         except:
-            print(tabulate(list1,headers=['Code','Name','Date','Address','Phone Number','Fc1','Fc2','Fc3'], tablefmt='github'))
+            print(tabulate(list1,headers=['Code','Name','DOB','Date','Address','Phone Number','Fc1','Fc2','Fc3'], tablefmt='github'))
 def deleterec():
     with open("Member File.dat","rb") as recdel:
         today=date.today()
@@ -124,7 +147,7 @@ def deleterec():
                 if code!=fees[0]:
                     feesnew.append(fees)
                 else:
-                    diff=(fees[2]-today).days
+                    diff=(fees[3]-today).days
                     if diff<=0:
                         overdue=1
                         feesnew.append(fees)
@@ -152,26 +175,36 @@ def deleterec():
 def newmember():
     with open('Member File.dat','rb')as member:
         recnew=[]
+        filesize = os.path.getsize("Member File.dat")
         try:
-            while True:
-                rec=pickle.load(member)
-                recnew.append(rec)
+            if filesize==0:
+                c=9/0
+            else:
+                while True:
+                    rec=pickle.load(member)
+                    recnew.append(rec)
         except:
             with open('Member File.dat','wb')as member:
-                n=int(input("Enter Number of New Members"))
+                n=int(input("Enter Number of New Members: "))
                 for loop in range(n):
                     code=codegen(recnew)
-                    print("Your Unique Member code=",code)
+                    print("Your Unique Member code= ",code)
                     name=namevalid()
-                    doj=datevalidation()
-                    address=input("Enter Adress : ")
-                    phone=int(input("Enter Phone Number : "))
+                    dob=datebirth()
+                    doj=datetoday()
+                    address=input("Enter Address: ")
+                    phone=phonevalid()
                     print('''The annual membership fee is Rs. 10,000 and for every 
-facility (sports) selected a member has to pay Rs. 2,000 annually''')
+facility (sports) selected a member has to pay Rs. 2,000 annually
+
+Here are the Available Facilities
+
+''')
+                    dispfac()
                     fc1,fc2,fc3=facilityvalid()
-                    newrec=[code,name,doj,address,phone,fc1,fc2,fc3]
+                    newrec=[code,name,dob,doj,address,phone,fc1,fc2,fc3]
                     pickle.dump(newrec,member)
-                    feesnew(doj,fc1,fc2,fc3,code)
+                    feesnew(name,doj,fc1,fc2,fc3,code)
                 for k in recnew:
                     pickle.dump(k,member)
 
@@ -179,18 +212,22 @@ def caldue(daypaid):
     diff=timedelta(days=365)
     duedate=daypaid+diff
     return duedate              
-def feesnew(doj,fc1,fc2,fc3,code):
+def feesnew(name,doj,fc1,fc2,fc3,code):
     with open('Fees File.dat','rb')as fees:
         feeslist=[]
+        filesize = os.path.getsize("Fees File.dat")
         try:
-            while True:
-                feesrec=pickle.load(fees)
-                feeslist.append(feesrec)
+            if filesize==0:
+                bora=9/0
+            else:
+                while True:
+                    feesrec=pickle.load(fees)
+                    feeslist.append(feesrec)
         except:
             with open('Fees File.dat','wb')as fees:
                 duedate=caldue(doj)
                 c=len(fc1+fc2+fc3)
-                feeslist.append([code,doj,duedate,10000+(2000*c)])
+                feeslist.append([code,name,doj,duedate,10000+(2000*c)])
                 for k in feeslist:
                     pickle.dump(k,fees)
                     
@@ -202,7 +239,7 @@ def dispfees():
                 rec=pickle.load(fees)
                 recnew.append(rec)
         except:
-            print(tabulate(recnew,headers=['Code','Paid Date','Next Due Date','Amount Paid'], tablefmt='github'))
+            print(tabulate(recnew,headers=['Code','Name','Paid Date','Next Due Date','Amount Paid'], tablefmt='github'))
 def dispfac():
     with open("Facility File.dat","rb")as fac:
         recnew=[]
@@ -225,9 +262,9 @@ def duefees():
             recnew=[]
             while True:
                 rec=pickle.load(fees)
-                diff=(rec[2]-today).days
+                diff=(rec[3]-today).days
                 if diff<=30:
-                    recnew.append([rec[0],rec[2]])
+                    recnew.append([rec[0],rec[3]])
         except:
             print(tabulate(recnew,headers=['Code','Due Date'], tablefmt='github'))
             
@@ -242,25 +279,21 @@ def updatefees():
                 if code==rec[0]:
                     print("Fees Paid Succesfully")
                     valid=1
-                    f1,f2,f3=rec[5],rec[6],rec[7]
+                    f1,f2,f3=rec[6],rec[7],rec[8]
         except:
             if valid==0:
                 print("Invalid Code, Terminating Function\n")
                 return()
-            print('3')
             with open ("Fees file.dat",'rb')as fees:
-                print('4')
                 try:
                     recnew=[]
                     while True:
-                        print('5')
                         rec=pickle.load(fees)
-                        print(rec)
                         if rec[0]==code:
-                            rec[1]=today
+                            rec[2]=today
                             duedate=caldue(today)
-                            rec[2]=duedate
-                            rec[3]=10000+(2000*len(f1+f2+f3))
+                            rec[3]=duedate
+                            rec[4]=10000+(2000*len(f1+f2+f3))
                         recnew.append(rec)
                 except:
                     print(recnew)
@@ -272,7 +305,7 @@ def addfac():
     with open("Facility file.dat","rb")as fac:
         try:
             newfac=input("\nEnter name of new Facility to be added : ")
-            c=1
+            c=0
             recnew=[]
             valid=1
             while True:
@@ -286,25 +319,24 @@ def addfac():
                 print("Facility Already exists\n")
                 return()
             with open("Facility file.dat","wb")as fac:
-                recnew.append([c,newfac])
+                recnew.append([str(c),newfac])
                 for k in recnew:
                     pickle.dump(k,fac)
 def searchmember():
     with open("Member file.dat","rb")as member:
-        code=input("Enter Member code")
-        title=['Code','Name','Date','Address','Phone','F1','F2','F3']
+        code=input("Enter Member code: ")
+        title=['Code','Name','DOB','Date','Address','Phone','F1','F2','F3']
         valid=0
         try:
             while True:
                 rec=pickle.load(member)
                 if rec[0]==code:
                     valid=1
-                    print('='*88)
-                    print('{:<10} {:<16} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(title[0],title[1],title[2],title[3],title[4],title[5],title[6],title[7]))
-                    print('-'*88)
-                    print('{:<10} {:<16} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(rec[0],rec[1],str(rec[2]),rec[3],rec[4],rec[5],rec[6],rec[7]))
-                    print('='*88)
+                    print('='*101)
+                    print('{:<10} {:<16} {:<12} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(title[0],title[1],title[2],title[3],title[4],title[5],title[6],title[7],title[8]))
+                    print('-'*101)
+                    print('{:<10} {:<16} {:<12} {:<12} {:<22} {:<10} {:<3} {:<3} {:<3}'.format(rec[0],rec[1],str(rec[2]),str(rec[3]),rec[4],rec[5],rec[6],rec[7],rec[8]))
+                    print('='*101)
         except:
             if valid==0:
                 print("Invalid Code Entered\n")
-    
